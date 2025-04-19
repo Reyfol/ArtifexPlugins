@@ -1,6 +1,6 @@
 package me.reyfol.ArtifexCurrencyPlugin.Commands;
 
-import me.reyfol.ArtifexCurrencyPlugin.DB.ArtifexCurrency;
+import me.reyfol.ArtifexCurrencyPlugin.DB.ArtifexCurrencyModel;
 import me.reyfol.ArtifexCurrencyPlugin.DB.ArtifexCurrencyDAO;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,12 +18,12 @@ public class ArtifexCurrencyBalanceCommand implements CommandExecutor {
         Player player = (Player) commandSender;
         UUID uuid = player.getUniqueId();
         ArtifexCurrencyDAO artifexCurrencyDAO = new ArtifexCurrencyDAO();
-        try {
-            ArtifexCurrency artifexCurrency = artifexCurrencyDAO.get(uuid.toString());
-            System.out.println(artifexCurrency);
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
+//        try {
+//            ArtifexCurrencyModel artifexCurrency = artifexCurrencyDAO.get(uuid.toString());
+//            System.out.println(artifexCurrency);
+//        } catch (SQLException e) {
+//            System.out.println(e);
+//        }
 
         return true;
     }

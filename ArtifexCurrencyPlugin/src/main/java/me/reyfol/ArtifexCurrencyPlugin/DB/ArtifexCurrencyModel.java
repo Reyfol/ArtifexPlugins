@@ -1,22 +1,24 @@
 package me.reyfol.ArtifexCurrencyPlugin.DB;
 
-public class ArtifexCurrency {
+import java.math.BigDecimal;
+
+public class ArtifexCurrencyModel {
 
     private String uuid;
     private String currencyName;
-    private int currencyValue;
+    private BigDecimal currencyValue;
 
-    public ArtifexCurrency(String uuid, String currencyName, int currencyValue) {
+    public ArtifexCurrencyModel(String uuid, String currencyName, BigDecimal currencyValue) {
         this.uuid = uuid;
         this.currencyName = currencyName;
         this.currencyValue = currencyValue;
     }
 
     public String getUuid() {
-        return uuid;
+        return this.uuid;
     }
 
-    public void setId(String uuid) {
+    public void setUuid(String uuid) {
         this.uuid = uuid;
     }
 
@@ -28,11 +30,11 @@ public class ArtifexCurrency {
         this.currencyName = currencyName;
     }
 
-    public int getCurrencyValue() {
+    public BigDecimal getCurrencyValue() {
         return currencyValue;
     }
 
-    public void setCurrencyValue(int currencyValue) {
+    public void setCurrencyValue(BigDecimal currencyValue) {
         this.currencyValue = currencyValue;
     }
 

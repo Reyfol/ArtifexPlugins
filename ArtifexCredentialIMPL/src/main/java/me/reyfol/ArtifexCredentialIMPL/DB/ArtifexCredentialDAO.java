@@ -14,7 +14,7 @@ public class ArtifexCredentialDAO {
             Connection conn = Database.getConnection();
             ArtifexCredential artifexCredential = null;
 
-            String sql = "SELECT uuid, username, password credentials WHERE uuid = ?";
+            String sql = "SELECT uuid, username, password FROM credentials WHERE uuid = ?";
 
             PreparedStatement ps = conn.prepareStatement(sql);
 
@@ -48,7 +48,7 @@ public class ArtifexCredentialDAO {
             Connection conn = Database.getConnection();
             String resultUuid = null;
 
-            String sql = "SELECT uuid credentials WHERE username = ?";
+            String sql = "SELECT uuid FROM credentials WHERE username = ?";
 
             PreparedStatement ps = conn.prepareStatement(sql);
 
@@ -100,14 +100,13 @@ public class ArtifexCredentialDAO {
 
     // CRUD - Create
     public boolean insert(ArtifexCredential artifexCredential){
-
         try{
             Connection conn = Database.getConnection();
 
             int result = -1;
 
             // Check if UUID already exists
-            final String queryCheck = "SELECT * credentials WHERE uuid = ?";
+            final String queryCheck = "SELECT * FROM credentials WHERE uuid = ?";
             final PreparedStatement ps_check = conn.prepareStatement(queryCheck);
             ps_check.setString(1, artifexCredential.getUuid());
             final ResultSet resultSet = ps_check.executeQuery();
@@ -121,7 +120,7 @@ public class ArtifexCredentialDAO {
             }
 
             // Add new player
-            String sql = "INSERT INTO artifex_credentials (uuid, username, password) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO credentials (uuid, username, password) VALUES (?, ?, ?)";
 
             PreparedStatement ps_insert = conn.prepareStatement(sql);
 

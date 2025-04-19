@@ -1,5 +1,6 @@
 package me.reyfol.ArtifexCurrencyPlugin.DB;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -9,11 +10,10 @@ public interface DAO<T> {
 
     List<T> getAll() throws SQLException;
 
-    int save(T t) throws SQLException;
+    boolean insert(T t) throws SQLException;
 
-    int insert(T t) throws SQLException;
+    boolean update(T t) throws SQLException;
 
-    int update(T t) throws SQLException;
+    boolean delete(T t) throws SQLException;
 
-    int delete(T t) throws SQLException;
 }

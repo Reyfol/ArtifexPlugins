@@ -1,136 +1,129 @@
 package me.reyfol.ArtifexCurrencyPlugin.DB;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
 
-public class ArtifexCurrencyDAO implements DAO<ArtifexCurrency> {
+public class ArtifexCurrencyDAO{
 
-    // CRUD - Retrieve
-    @Override
-    public ArtifexCurrency get(String selectedUuid) throws SQLException {
-        Connection con = Database.getConnection();
-        ArtifexCurrency currency = null;
+    // @Override
+    public BigDecimal getCurrencyValue(String uuid, String currencyName) throws SQLException {
+        Connection con = DBConnection.getConnection();
+        BigDecimal currencyValue = null;
 
-        String sql = "SELECT uuid, currency_value, currency_value FROM currencies WHERE uuid = ?";
-
+        String sql = "SELECT currency_value FROM currencies WHERE uuid = ? AND currency_name = ?";
         PreparedStatement ps = con.prepareStatement(sql);
 
-        ps.setString(1, selectedUuid);
+        ps.setString(1, uuid);
+        ps.setString(2, currencyName);
 
         ResultSet rs = ps.executeQuery();
 
         if (rs.next()) {
-            String uuid = rs.getString("uuid");
-            String currencyName = rs.getString("currency_value");
-            int currencyValue = rs.getInt("currency_value");
-
-            currency = new ArtifexCurrency(uuid, currencyName, currencyValue);
+            currencyValue = rs.getBigDecimal("currency_value");
         }
 
-        Database.closeResultSet(rs);
-        Database.closePreparedStatement(ps);
-        Database.closeConnection(con);
+        DBConnection.closeResultSet(rs);
+        DBConnection.closePreparedStatement(ps);
+        DBConnection.closeConnection(con);
 
-        return currency;
+        return currencyValue;
     }
 
-    // CRUD - Retrieve All
-    @Override
-    public List<ArtifexCurrency> getAll() throws SQLException {
+//
 
-        Connection con = Database.getConnection();
-        String sql = "SELECT uuid, currency_value, currency_value FROM currencies";
 
-        List<ArtifexCurrency> currencyList = new ArrayList<>();
+    // @Override
+    public boolean insert(ArtifexCurrencyModel currency) throws SQLException {
+        Connection con = DBConnection.getConnection();
 
-        Statement stmt = con.createStatement();
-
-        ResultSet rs = stmt.executeQuery(sql);
-
-        while (rs.next()) {
-            String uuid = rs.getString("uuid");
-            String currencyName = rs.getString("currency_name");
-            int currencyValue = rs.getInt("currency_value");
-
-            ArtifexCurrency currency = new ArtifexCurrency(uuid, currencyName, currencyValue);
-
-            currencyList.add(currency);
-        }
-
-        return currencyList;
-    }
-
-    // CRUD - Create or Update
-    @Override
-    public int save(ArtifexCurrency currency) throws SQLException {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    // CRUD - Create
-    @Override
-    public int insert(ArtifexCurrency currency) throws SQLException {
-        Connection con = Database.getConnection();
-
-        String sql = "INSERT INTO currencies (uuid, currency_value, currency_value) VALUES (?, ?, ?)";
-
+        String sql = "INSERT INTO currencies (uuid, currency_name, currency_value) "
+                + "SELECT ?, ?, ? "
+                + "WHERE NOT EXISTS (SELECT 1 FROM currencies WHERE uuid = ? AND currency_name = ?)";
         PreparedStatement ps = con.prepareStatement(sql);
 
         ps.setString(1, currency.getUuid());
         ps.setString(2, currency.getcurrencyName());
-        ps.setInt(3, currency.getCurrencyValue());
+        ps.setBigDecimal(3, currency.getCurrencyValue());
+        ps.setString(4, currency.getUuid());
+        ps.setString(5, currency.getcurrencyName());
 
         int result = ps.executeUpdate();
 
-        Database.closePreparedStatement(ps);
-        Database.closeConnection(con);
+        DBConnection.closePreparedStatement(ps);
+        DBConnection.closeConnection(con);
 
-        return result;
+        return result != 0;
     }
 
-    // CRUD - Update
-    @Override
-    public int update(ArtifexCurrency currency) throws SQLException {
-        Connection connection = Database.getConnection();
+    public boolean update(ArtifexCurrencyModel currency) throws SQLException {
+        Connection connection = DBConnection.getConnection();
 
-        String sql = "UPDATE currencies set currency_type = ?, currency_value = ? where uuid = ?";
+        String sql = "UPDATE currencies SET currency_value = ? WHERE uuid = ? AND currency_name = ?";
 
         PreparedStatement ps = connection.prepareStatement(sql);
 
-        ps.setString(1, currency.getcurrencyName());
-        ps.setInt(2, currency.getCurrencyValue());
+        ps.setBigDecimal(1, currency.getCurrencyValue());
+        ps.setString(2, currency.getUuid());
+        ps.setString(3, currency.getcurrencyName());
 
         int result = ps.executeUpdate();
 
-        Database.closePreparedStatement(ps);
-        Database.closeConnection(connection);
+        DBConnection.closePreparedStatement(ps);
+        DBConnection.closeConnection(connection);
 
-        return result;
+        return result != 0;
     }
 
-    // CRUD - Delete
-    @Override
-    public int delete(ArtifexCurrency currency) throws SQLException {
-        Connection connection = Database.getConnection();
 
-        String sql = "DELETE FROM currencies WHERE uuid = ?";
+    public boolean delete(String uuid, String currencyName) throws SQLException {
+        Connection connection = DBConnection.getConnection();
+
+        String sql = "DELETE FROM currencies WHERE uuid = ? AND currency_name = ?";
 
         PreparedStatement ps = connection.prepareStatement(sql);
 
-        ps.setString(1, currency.getUuid());
+        ps.setString(1, uuid);
+        ps.setString(2, currencyName);
 
         int result = ps.executeUpdate();
 
-        Database.closePreparedStatement(ps);
-        Database.closeConnection(connection);
+        DBConnection.closePreparedStatement(ps);
+        DBConnection.closeConnection(connection);
 
-        return result;
+        return result != 0;
     }
 
+    public boolean addValue(String uuid, String currencyName, BigDecimal valueToAdd) throws SQLException{
+        BigDecimal currentBalance = getCurrencyValue(uuid, currencyName);
+        ArtifexCurrencyModel updatedArtifexCurrencyModel = new ArtifexCurrencyModel(uuid, currencyName, currentBalance.add(valueToAdd));
+        update(updatedArtifexCurrencyModel);
+
+        return true;
+    }
+
+    public boolean subtractValue(String uuid, String currencyName, BigDecimal valueToSubtract) throws SQLException{
+        BigDecimal currentBalance = getCurrencyValue(uuid, currencyName);
+        ArtifexCurrencyModel updatedArtifexCurrencyModel = new ArtifexCurrencyModel(uuid, currencyName, currentBalance.subtract(valueToSubtract));
+        update(updatedArtifexCurrencyModel);
+
+        return true;
+    }
+
+    public boolean transfer(String uuidFrom, String uuidTo, String currencyName, BigDecimal amountToTransfer) throws SQLException {
+        BigDecimal balanceFrom = getCurrencyValue(uuidFrom, currencyName);
+
+        if(balanceFrom.compareTo(amountToTransfer) < 0){
+            // not enough balance
+            return false;
+        }
+
+        subtractValue(uuidFrom, currencyName, amountToTransfer);
+        addValue(uuidTo, currencyName, amountToTransfer);
+
+        return true;
+    }
 }

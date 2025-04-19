@@ -7,13 +7,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class Database {
+public class DBConnection {
 
     private static String url = "jdbc:mysql://localhost:3306/practice";
     private static String user = "root";
     private static String password = "mysql";
 
-    private Database() {
+    private DBConnection() {
     }
 
     public static Connection getConnection() throws SQLException {
