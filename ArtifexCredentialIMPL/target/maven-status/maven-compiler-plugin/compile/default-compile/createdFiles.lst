@@ -1,0 +1,5 @@
+me\reyfol\ArtifexCredentialIMPL\DB\Database.class
+me\reyfol\ArtifexCredentialIMPL\DB\ArtifexCredential.class
+me\reyfol\ArtifexCredentialIMPL\API\ArtifexCredentialAPI.class
+me\reyfol\ArtifexCredentialIMPL\API\ArtifexCredentialIMPL.class
+me\reyfol\ArtifexCredentialIMPL\DB\ArtifexCredentialDAO.class
