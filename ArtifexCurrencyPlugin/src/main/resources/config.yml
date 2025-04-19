@@ -1,0 +1,7 @@
+currencies:
+  default:
+    type: "money"
+    defaultValue: 0
+  diaz:
+    type: "diaz"
+    defaultValue: 0

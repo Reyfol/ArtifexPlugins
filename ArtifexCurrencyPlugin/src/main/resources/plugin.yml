@@ -1,0 +1,9 @@
+name: ArtifexCurrencyPlugin
+version: 0.0.1
+main: me.reyfol.ArtifexCurrencyPlugin.ArtifexCurrencyPlugin
+commands:
+  balance:
+    description: Get current balance
+    aliases:
+      - bal
+    usage: /balance
